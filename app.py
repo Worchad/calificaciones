@@ -3,25 +3,23 @@ from flask import Flask, redirect, url_for, render_template, request, jsonify
 from flask import json
 from flask.globals import session
 from flask.helpers import flash
-from flask.json import JSONEncoder, dump
 from flask_wtf import CSRFProtect
 from flask_bcrypt import Bcrypt
 import sqlite3 as sql
 from flask import g
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.dialects import postgresql
+import os
 
 
 app = Flask(__name__)
 app.secret_key = 'v}*`KT3:82^dc[|M?.rYs/)QP#:2Bf*0M#WaG"$aq.iPMnA_vph&5=RL;_e"|Br'
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sica.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///'+os.path.join(app.root_path, 'sica.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 csrf = CSRFProtect(app)
 bcrypt = Bcrypt(app)
 db = SQLAlchemy(app)
-# usuarios = db.Table('usuarios', db.metadata, autoload=True, autoload_with=db.engine)
 
 Base = automap_base()
 Base.prepare(db.engine, reflect=True)
@@ -31,7 +29,7 @@ Personas = Base.classes.personas
 Roles = Base.classes.roles
 
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def index():
     titulo = "COLFEAR | INICIO DE SESIÓN"
     return render_template('login.html', titulo=titulo)
@@ -81,6 +79,15 @@ def comprobarLogin(usuario, password, rol):
                 return False
         else:
            return False
+
+@app.route('/cambio_password')
+def cambioPassword():
+    titulo = "Cambio de Contraseña"
+    return render_template('cambioPassword.html',titulo=titulo)
+
+
+
+
 
 @app.route('/cerrar_sesion')
 def cerrarSesion():
