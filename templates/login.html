@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="Description" content="Sistema de registro de inventario" />
-    <link rel="shortcut icon" href="static/img/boxes-solid.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="static/img/graduation-cap-solid.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.2/materia/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css">
     <title>{{titulo}}</title>
     <style>
         body {
-            background-image: url('static/img/fondo.jpg');
+            background-image: url('static/img/fondo-min.jpg');
             background-position: center;
             background-repeat: no-repeat;
             background-size: cover;
@@ -32,7 +32,8 @@
                 <div class="card text-left">
                     <!-- <img class="card-img-top" src="" alt=""> -->
                     <div class="card-body">
-                        <h4 class="card-title text-center"><i class="fas fa-boxes fa-3x"></i> <br>SISTEMA DE CONTROL DE CALIFICACIONES
+                        <h4 class="card-title text-center"><i class="fas fa-graduation-cap fa-3x"></i> <br>SISTEMA DE CONTROL DE
+                            CALIFICACIONES
                         </h4>
                         <h5 class="text-center">COLFEAR</h5>
                         {% if error %}
@@ -44,26 +45,48 @@
                             <strong>Atención!</strong> {{ error }}.
                         </div>
                         {% endif %}
+
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                                <span class="sr-only">Close</span>
+                            </button>
+                            <strong>Atención!</strong> {{ message }}.
+                        </div>
+                        {% endfor %}
+                        {% endif %}
+                        {% endwith %}
                         <form action="procesar_login" method="POST">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="txtUsuario">Usuario</label>
-                                        <input type="text" class="form-control" name="txtUsuario" id="txtUsuario"
-                                            placeholder="Ingrese su usuario" autofocus>
+                                        <input type="number" class="form-control" name="txtUsuario" id="txtUsuario"
+                                            placeholder="Ingrese su cédula" autofocus>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label for="txtPassword">Contraseña</label>
                                         <input type="password" class="form-control" name="txtPassword" id="txtPassword"
                                             placeholder="Ingrese su Contraseña">
                                     </div>
                                 </div>
                             </div>
-                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <select class="form-control" name="sltRol" id="sltRol">
+                                            <option value="1">ALUMNO</option>
+                                            <option value="2">PROFESOR</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                             <div class="row">
                                 <div class="col-md-12 text-right">
                                     <div class="form-group">

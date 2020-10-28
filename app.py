@@ -1,48 +1,90 @@
-from flask import Flask, redirect, url_for, render_template, request
+import sqlite3
+from flask import Flask, redirect, url_for, render_template, request, jsonify
+from flask import json
+from flask.globals import session
 from flask.helpers import flash
+from flask.json import JSONEncoder, dump
 from flask_wtf import CSRFProtect
 from flask_bcrypt import Bcrypt
+import sqlite3 as sql
+from flask import g
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.dialects import postgresql
+
 
 app = Flask(__name__)
 app.secret_key = 'v}*`KT3:82^dc[|M?.rYs/)QP#:2Bf*0M#WaG"$aq.iPMnA_vph&5=RL;_e"|Br'
 app.config['SESSION_TYPE'] = 'filesystem'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sica.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 csrf = CSRFProtect(app)
 bcrypt = Bcrypt(app)
+db = SQLAlchemy(app)
+# usuarios = db.Table('usuarios', db.metadata, autoload=True, autoload_with=db.engine)
+
+Base = automap_base()
+Base.prepare(db.engine, reflect=True)
+Usuarios = Base.classes.usuarios
+RolesUsuarios = Base.classes.roles_usuarios
+Personas = Base.classes.personas
+Roles = Base.classes.roles
+
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
     titulo = "COLFEAR | INICIO DE SESIÓN"
     return render_template('login.html', titulo=titulo)
 
+
 @app.route('/procesar_login', methods=['POST'])
 def login():
     error = None
-    if request.method=='POST':
+    if request.method == 'POST':
         datos = request.form
-        if (datos['txtUsuario']!="" and datos['txtPassword']!=""):
-            if comprobarLogin(datos['txtUsuario'],datos['txtPassword']):
-                flash('Login realizado con exito')
+        if (datos['txtUsuario'] != "" and datos['txtPassword'] != "" and datos['sltRol']):
+            if comprobarLogin(datos['txtUsuario'], datos['txtPassword'], datos['sltRol']):
                 return redirect(url_for('principal'))
             else:
-                 error = "Usuario o contraseña incorrectos"
+                 flash(u'Credenciales incorrectas', 'warning')
         else:
-            error = "Ingrese sus credenciales por favor"
+         flash(u'Debe ingresar sus credenciales para ingresar al sistema', 'warning')
     return redirect(url_for('index'))
+
 
 @app.route("/principal")
 def principal():
-    titulo = "COLFEAR | PRINCIPAL"
-    return render_template('principal.html', titulo=titulo)
-
-def comprobarLogin(usuario,password):
-
-    if (usuario=="ajcolman" and bcrypt.check_password_hash('$2y$12$CBGt2N9p.FtMqKdRXW3HQ.V6qNs6jeYzn2RgvHZ7LdWuAMPIwFxdu',password)):
-        return True
+    if session.get('conectado') == 'S':
+        titulo = "COLFEAR | PRINCIPAL"
+        return render_template('principal.html', titulo=titulo)
     else:
-        return False
+        flash(u'Debe ingresar sus credenciales para ingresar al sistema', 'warning')
+        return redirect(url_for('index'))
+
+
+def comprobarLogin(usuario, password, rol):
+    results = db.session.query(Personas,Usuarios,Roles,RolesUsuarios)\
+    .filter(Personas.pers_cod == Usuarios.usua_pers_cod,Usuarios.usua_cod == RolesUsuarios.rous_usua_cod,Roles.rol_cod == RolesUsuarios.rous_rol_cod,Personas.pers_nro_doc == usuario, RolesUsuarios.rous_rol_cod == rol).all()
+    hash = None
+    for r in results:
+        session['conectado'] = 'S'
+        session['usua_cod'] = r.usuarios.usua_cod
+        session['usua_cedula'] = r.personas.pers_nro_doc
+        session['usua_nombre'] = r.personas.pers_prim_nombre+' '+r.personas.pers_seg_nombre + \
+            ' '+r.personas.pers_prim_apellido+' '+r.personas.pers_seg_apellido
+        session['usua_rold'] = r.roles.rol_desc
+        hash = r.usuarios.usua_password
+        if bcrypt.check_password_hash(hash,password):
+            if 'usua_cod' in session:
+                return True
+            else:
+                return False
+        else:
+           return False
 
 @app.route('/cerrar_sesion')
 def cerrarSesion():
+    session.clear()
     return redirect(url_for('index'))
 
 if __name__ == '__main__':
