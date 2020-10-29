@@ -68,8 +68,7 @@ def comprobarLogin(usuario, password, rol):
         session['conectado'] = 'S'
         session['usua_cod'] = r.usuarios.usua_cod
         session['usua_cedula'] = r.personas.pers_nro_doc
-        session['usua_nombre'] = r.personas.pers_prim_nombre+' '+r.personas.pers_seg_nombre + \
-            ' '+r.personas.pers_prim_apellido+' '+r.personas.pers_seg_apellido
+        session['usua_nombre'] = r.personas.pers_prim_nombre+' '+r.personas.pers_prim_apellido
         session['usua_rold'] = r.roles.rol_desc
         hash = r.usuarios.usua_password
         if bcrypt.check_password_hash(hash,password):
