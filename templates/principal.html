@@ -8,7 +8,21 @@
                 Bienvenido {{ session.get('usua_nombre') }}
             </div>
             <div class="card-body">
-                
+                {% if session.get('usua_rol')==3 %}
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <a href="registrar_persona"><button type="button" class="btn btn-primary btn-block"><i class="fas fa-users fa-5x"></i><br> Registrar Persona</button></a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <a href="crear_usuario"><button type="button" class="btn btn-primary btn-block"><i class="fas fa-user fa-5x"></i><br> Crear
+                                    Usuario</button></a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
