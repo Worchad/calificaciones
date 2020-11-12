@@ -1,0 +1,513 @@
+{% extends "master.html" %}
+{% block title%}{{titulo}}{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-header">
+        Módulo de Registro de Personas
+      </div>
+      <div class="card-body">
+        <form id="frmRegPersonas">
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Primer Nombre</label>
+                <input type="text" name="txtPrimerNombre" class="form-control" required="required" autofocus="autofocus" value="">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Segundo Nombre</label>
+                <input type="text" name="txtSegundoNombre" class="form-control">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Primer Apellido</label>
+                <input type="text" name="txtPrimerApellido" class="form-control">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Segundo Apellido</label>
+                <input type="text" name="txtSegundoApellido" class="form-control">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Nro. de Cédula</label>
+                <input type="number" name="txtNroCedula" class="form-control">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Sexo</label>
+                <select name="sltSexo" class="form-control">
+                  <option value="">SELECCIONE UNA OPCIÓN</option>
+                  <option value="F">FEMENINO</option>
+                  <option value="M">MASCULINO</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Fecha de Nacimiento</label>
+                <input type="date" name="txtFechaNacimiento" class="form-control">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="form-group">
+                <label>Estado Civil</label>
+                <select name="sltEstadoCivil" class="form-control">
+                  <option value="">SELECCIONE UNA OPCIÓN</option>
+                  <option value="C">CASADO/A</option>
+                  <option value="D">DIVORCIADO/A</option>
+                  <option value="S">SOLTERO/A</option>
+                  <option value="V">VIUDO/A</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Es Alumno?</label>
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="chkAlumno" name="chkAlumno" value="S">
+                  <label class="custom-control-label" for="chkAlumno">Sí</label>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Es Profesor?</label>
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="chkProfesor" name="chkProfesor" value="S">
+                  <label class="custom-control-label" for="chkProfesor">Sí</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <h4>Inscribir a Cátedras</h4>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <button type="button" id="btnAggAlumno" class="btn btn-primary btn-block" data-target="#mdlAgregarMaterias" data-toggle="modal" style="display:none"><i class="fas fa-plus"></i> Agregar</button>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Carrera</th>
+                          <th>Materia</th>
+                          <th>Profesor</th>
+                          <th>Turno</th>
+                          <th>Grupo</th>
+                          <th>Modalidad</th>
+                          <th>Hora Inicio</th>
+                          <th>Hora Culminación</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody id="listInscriptas">
+                        <tr>
+                          <th class="text-center" colspan="9"><h4>SIN DATOS DE CÁTEDRAS INSCRIPTAS</h4></th>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <h4>Asignar Cátedras</h4>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <button type="button" id="btnAggProfesor" class="btn btn-primary btn-block" data-target="#mdlAgregarMaterias" data-toggle="modal" style="display:none"><i class="fas fa-plus"></i> Agregar</button>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="table-responsive">
+                    <table class="table table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Carrera</th>
+                          <th>Materia</th>
+                          <th>Profesor</th>
+                          <th>Turno</th>
+                          <th>Grupo</th>
+                          <th>Modalidad</th>
+                          <th>Hora Inicio</th>
+                          <th>Hora Culminación</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody id="listAsignadas">
+                        <tr>
+                          <th class="text-center" colspan="9"><h4>SIN DATOS DE CÁTEDRAS ASIGNADAS</h4></th>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group text-right">
+                <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> Registrar</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="mdlAgregarMaterias" tabindex="-1" role="dialog" aria-labelledby="mdlAgregarMateriasTitulos" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Agregar Cátedras</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Carrera</label>
+                <select id="sltCarrera" class="form-control">
+                  <option value="">SELECCIONE UNA OPCIÓN</option>
+                  {% for c in carreras %}
+                  <option value="{{ c.carr_cod }}">{{ c.carr_desc }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Materia</label>
+                <select id="sltMateria" class="form-control">
+                  <option value="">SELECCIONE UNA OPCIÓN</option>
+
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Titular</label>
+                <select id="sltTitular" class="form-control">
+                  <option value="">SELECCIONE UNA OPCIÓN</option>
+
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Turno</label>
+                <select id="sltTurno" class="form-control">
+                  <option value="">SELECCIONE UNA OPCIÓN</option>
+                  <option value="M">MAÑANA</option>
+                  <option value="T">TARDE</option>
+                  <option value="N">NOCHE</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Grupo</label>
+                <input type="text" id="txtGrupo" class="form-control">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Modalidad</label>
+                <select class="form-control" id="sltModalidad">
+                  <option value="">SELECCIONE UNA OPCIÓN</option>
+                  <option value="H">HOME</option>
+                  <option value="P">PRESENCIAL</option>
+                  <option value="V">VIRTUAL</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Hora Inicio</label>
+                <input type="time" id="txtHoraInicio" class="form-control">
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label>Hora Culminación</label>
+                <input type="time" id="txtHoraCulminacion" class="form-control">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" id="txtmodulo" readonly>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-primary" id="btnAggMateria" data-dismiss="modal"><i class="fas fa-plus"></i> Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block javascript %}
+<script type="text/javascript">
+var token = '{{ csrf_token() }}';
+$("#chkAlumno").click(function(event) {
+  $("#sltTitular").attr('disabled', false);
+  if($(this).prop('checked')==true){
+    $("#btnAggAlumno").show('slow');
+    $("#sltTurno").attr('disabled', true);
+    $("#txtGrupo").attr('disabled', true);
+    $("#sltModalidad").attr('disabled', true);
+    $("#txtHoraInicio").attr('disabled', true);
+    $("#txtHoraCulminacion").attr('disabled', true);
+  } else {
+    $("#btnAggAlumno").hide('slow');
+    $("#sltTurno").attr('disabled', false);
+    $("#txtGrupo").attr('disabled', false);
+    $("#sltModalidad").attr('disabled', false);
+    $("#txtHoraInicio").attr('disabled', false);
+    $("#txtHoraCulminacion").attr('disabled', false);
+    materiasAlumno = [];
+    $("#listInscriptas").html('<tr><th class="text-center" colspan="9"><h4>SIN DATOS DE CÁTEDRAS INSCRIPTAS</h4></th></tr>');
+  }
+
+});
+$("#chkProfesor").click(function(event) {
+  if($(this).prop('checked')==true){
+    $("#btnAggProfesor").show('slow');
+    $("#sltTitular").attr('disabled', true);
+    $("#sltTurno").attr('disabled', false);
+    $("#txtGrupo").attr('disabled', false);
+    $("#sltModalidad").attr('disabled', false);
+    $("#txtHoraInicio").attr('disabled', false);
+    $("#txtHoraCulminacion").attr('disabled', false);
+  }else{
+    $("#btnAggProfesor").hide('slow');
+    $("#sltTitular").attr('disabled', false);
+    $("#sltTurno").attr('disabled', true);
+    $("#txtGrupo").attr('disabled', true);
+    $("#sltModalidad").attr('disabled', true);
+    $("#txtHoraInicio").attr('disabled', true);
+    $("#txtHoraCulminacion").attr('disabled', true);
+    materiasProfesor = [];
+    $("#listAsignadas").html('<tr><th class="text-center" colspan="9"><h4>SIN DATOS DE CÁTEDRAS ASIGNADAS</h4></th></tr>');
+  }
+
+});
+$("#btnAggAlumno").click(function(event) {
+  $("#txtmodulo").val('A');
+});
+$("#btnAggProfesor").click(function(event) {
+  $("#txtmodulo").val('P');
+});
+$("#sltCarrera").change(function(event) {
+  carrera = $(this).val();
+  $.ajax({
+    url: '/obtener_materias_alumnos',
+    type: 'POST',
+    data: {carrera},
+    beforeSend: function(xhr, settings) {
+      if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+        xhr.setRequestHeader("X-CSRFToken", token)
+      }
+    }
+  })
+  .done(function(data) {
+    var datos = Object.values(data);
+    var h = '<option value="">SELECCIONE UNA OPCIÓN</option>';
+    for (var i = 0; i < datos.length; i++) {
+      h+='<option value="'+datos[i].cod_came+'">'+datos[i].desc_mate+'</option>';
+    }
+    $("#sltMateria").html(h);
+  });
+});
+$("#sltMateria").change(function(event) {
+  materia = $(this).val();
+  $.ajax({
+    url: '/obtener_titular_materias',
+    type: 'POST',
+    data: {materia},
+    beforeSend: function(xhr, settings) {
+      if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+        xhr.setRequestHeader("X-CSRFToken", token)
+      }
+    }
+  })
+  .done(function(data) {
+    var datos = Object.values(data);
+    var h = '<option value="">SELECCIONE UNA OPCIÓN</option>';
+    for (var i = 0; i < datos.length; i++) {
+      h+='<option value="'+datos[i].tima_cod+'">'+datos[i].profesor+'</option>';
+    }
+    $("#sltTitular").html(h);
+    $("#sltTitular").change(function(event) {
+      completarCampos(datos);
+    });
+  });
+});
+function completarCampos(datos) {
+  var tima = $("#sltTitular option:selected").val();
+  for (var i = 0; i < datos.length; i++) {
+    if (parseInt(datos[i].tima_cod)===parseInt(tima)) {
+      $("#sltTurno").val(datos[i].turno);
+      $("#txtGrupo").val(datos[i].grupo);
+      $("#sltModalidad").val(datos[i].modalidad);
+      $("#txtHoraInicio").val(datos[i].hora_inicio);
+      $("#txtHoraCulminacion").val(datos[i].hora_culminacion);
+      break;
+    }
+  }
+}
+var materiasAlumno = [];
+var materiasProfesor  = [];
+var a = 0;
+var p = 0;
+$("#btnAggMateria").click(function(event) {
+  event.preventDefault();
+  var carreraDesc = $("#sltCarrera option:selected").text();
+  var carreraCod = $("#sltCarrera option:selected").val();
+  var materiaDesc = $("#sltMateria option:selected").text();
+  var materiaCod = $("#sltMateria option:selected").val();
+  var titularDesc = $("#sltTitular option:selected").text();
+  var titularCod = $("#sltTitular option:selected").val();
+  var turnoCod = $("#sltTurno option:selected").val();
+  var turnoDesc = $("#sltTurno option:selected").text();
+  var grupoDesc = $("#txtGrupo").val();
+  var modoCod = $("#sltModalidad option:selected").val();
+  var modoDesc = $("#sltModalidad option:selected").text();
+  var horaInicio = $("#txtHoraInicio").val();
+  var horaCulminacion = $("#txtHoraCulminacion").val();
+  var registro = carreraCod+'/'+materiaCod+'/'+titularCod+'/'+turnoCod+'/'+grupoDesc+'/'+modoCod+'/'+horaInicio+'/'+horaCulminacion;
+  var modulo = $("#txtmodulo").val();
+  if (carreraCod!="" && materiaCod!="" && carreraCod!=null && materiaCod!=null) {
+      if (modulo=='A') {
+        if (materiasAlumno.includes(registro)) {
+          Swal.fire('Atención!!!','Ya se encuentra en el listado de Cátedras asignadas, la carrera y la materia que desea agregar.','warning');
+        } else {
+          materiasAlumno.push(registro);
+          var h = '<tr class="filaAlumno'+a+'" value="'+registro+'">';
+          h += '<td>'+carreraDesc+'</td>';
+          h += '<td>'+materiaDesc+'</td>';
+          h += '<td>'+titularDesc+'<input type="hidden" name="txtTitular[]" readonly value="'+titularCod+'" /></td>';
+          h += '<td>'+turnoDesc+'</td>';
+          h += '<td>'+grupoDesc+'</td>';
+          h += '<td>'+modoDesc+'</td>';
+          h += '<td>'+horaInicio+'</td>';
+          h += '<td>'+horaCulminacion+'</td>';
+          h += '<td><button type="button" class="elimInscriptas btn btn-warning btn-sm" value="'+a+'"><i class="fas fa-trash"></i></button></td>';
+          h += '</tr>';
+          if (materiasAlumno.length>1) {
+            $("#listInscriptas").append(h);
+          } else {
+            $("#listInscriptas").html(h);
+          }
+          a++;
+          $(".elimInscriptas").click(function(event) {
+            event.preventDefault();
+            var v = $(this).val();
+            $(".filaAlumno"+v).remove();
+            materiasAlumno.splice($(".filaAlumno"+v).attr('value'));
+          });
+        }
+      }
+      if (modulo=='P') {
+        if (materiasProfesor.includes(registro)) {
+          Swal.fire('Atención!!!','Ya se encuentra en el listado de Cátedras asignadas, la carrera y la PromateriasProfesor que desea agregar.','warning');
+        } else {
+          materiasProfesor.push(registro);
+          var h = '<tr class="filaProfesor'+p+'" value="'+registro+'">';
+          h += '<td>'+carreraDesc+'</td>';
+          h += '<td>'+materiaDesc+'<input type="hidden" name="txtMateriaProfesor[]" value="'+materiaCod+'"/></td>';
+          h += '<td>{{ session.get("usua_nombre") }}</td>';
+          h += '<td>'+turnoDesc+'<input type="hidden" name="txtTurnoProfesor[]" value="'+turnoCod+'"/></td>';
+          h += '<td>'+grupoDesc+'<input type="hidden" name="txtGrupoProfesor[]" value="'+grupoDesc+'"/></td>';
+          h += '<td>'+modoDesc+'<input type="hidden" name="txtModoProfesor[]" value="'+modoCod+'"/></td>';
+          h += '<td>'+horaInicio+'<input type="hidden" name="txtHoraInicioProfesor[]" value="'+horaInicio+'"/></td>';
+          h += '<td>'+horaCulminacion+'<input type="hidden" name="txtHoraFinProfesor[]" value="'+horaCulminacion+'"/></td>';
+          h += '<td><button type="button" class="elimAsignadas btn btn-warning btn-sm" value="'+p+'"><i class="fas fa-trash"></i></button></td>';
+          h += '</tr>';
+          if (materiasProfesor.length>1) {
+            $("#listAsignadas").append(h);
+          } else {
+            $("#listAsignadas").html(h);
+          }
+          p++;
+          $(".elimAsignadas").click(function(event) {
+            event.preventDefault();
+            var v = $(this).val();
+            $(".filaProfesor"+v).remove();
+            materiasProfesor.splice($(".filaProfesor"+v).attr('value'));
+          });
+        }
+      }
+  } else {
+    Swal.fire('Atención!!!','Debe seleccionar la carrera y la materia.','warning');
+  }
+});
+$("#frmRegPersonas").submit(function(event) {
+  event.preventDefault();
+  var formDatos = $(this).serialize();
+  $.post(baseUrl+'/modificar_persona', formDatos, function(data, textStatus, xhr) {
+    var r = data;
+    var h = "<ul>"
+    if (r != "correcto" && r != "incorrecto" && r != "existe") {
+      for (var i = 0; i < r.length; i++) {
+          h+='<li>'+r[i][1][0]+'</li>';
+      }
+      h += "</ul>";
+      Swal.fire({
+          icon: 'warning',
+          title: 'Atención!',
+          html: h,
+        });
+  } else {
+      if (r == "correcto") {
+          Swal.fire(
+              'Correcto!',
+              'Se registro correctamente a la persona!',
+              'success'
+          )
+      }
+      if (r == "incorrecto") {
+          Swal.fire(
+              'Atención!',
+              'Se produjó un error en la inserción de los registros',
+              'warning'
+          )
+      }
+      if (r == "existe") {
+        Swal.fire(
+            'Atención!',
+            'Ya existe registrada una persona con los mismo datos, verifique el listado de personas',
+            'warning'
+        )
+    }
+  }
+  });
+});
+</script>
+{% endblock %}

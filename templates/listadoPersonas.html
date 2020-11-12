@@ -1,0 +1,154 @@
+{% extends "master.html" %}
+{% block title%}{{titulo}}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                Módulo de Listado de Personas
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Nro. de Cédula</th>
+                                        <th>Nombre y Apellido</th>
+                                        <th>Fecha de Nacimiemto</th>
+                                        <th>Es Alumno?</th>
+                                        <th>Es Profesor?</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for p in personas %}
+                                    <tr>
+                                        <td>{{ p.pers_nro_doc }}</td>
+                                        {% if p.pers_seg_nombre!=None %}
+                                        {% set segundoNombre = p.pers_seg_nombre %}
+                                        {% else %}
+                                        {%  set segundoNombre = "" %}
+                                        {% endif %}
+                                        {% if p.pers_seg_apellido!=None%}
+                                        {% set segundoApellido = p.pers_seg_apellido %}
+                                        {% else %}
+                                        {% set segundoApellido = "" %}
+                                        {% endif %}
+                                        <td>{{ p.pers_prim_nombre+' '+segundoNombre+' '+p.pers_prim_apellido+' '+segundoApellido }}
+                                        </td>
+                                        <td>{{ p.pers_fecha_nacimiento }}</td>
+                                        <td>{% if p.pers_alumno=='S' %}
+                                            SÍ
+                                            {% else %}
+                                            NO
+                                            {% endif %}</td>
+                                        <td>{% if p.pers_profesor=='S' %}
+                                            SÍ
+                                            {% else %}
+                                            NO
+                                            {% endif %}</td>
+                                        <td><button type="button" class="selPersona btn btn-primary btn-sm"
+                                                value="{{ p.pers_cod }}"><i class="fas fa-edit"></i></button></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>Nro. de Cédula</th>
+                                        <th>Nombre y Apellido</th>
+                                        <th>Fecha de Nacimiemto</th>
+                                        <th>Es Alumno?</th>
+                                        <th>Es Profesor?</th>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block javascript %}
+<script>
+    var token = '{{ csrf_token() }}';
+    $(document).ready(function () {
+        $('.table').DataTable(
+            {
+                dom: 'Bfrtip',
+                buttons: [
+                    {extend: 'excel',
+                    exportOptions:{
+                        columns: [0,1,2,3,4]
+                    }},
+                    {extend: 'pdf',
+                    exportOptions:{
+                        columns: [0,1,2,3,4]
+                    }},
+                    {extend: 'print',
+                    exportOptions:{
+                        columns: [0,1,2,3,4]
+                    }}
+                
+                ],
+                initComplete: function () {
+                    // Apply the search
+                    this.api().columns().every(function () {
+                        var that = this;
+
+                        $('input', this.footer()).on('keyup change clear', function () {
+                            if (that.search() !== this.value) {
+                                that
+                                    .search(this.value)
+                                    .draw();
+                            }
+                        });
+                    });
+                },
+                'language': {
+                    "sProcessing": "Procesando...",
+                    "sLengthMenu": "Mostrar _MENU_ registros",
+                    "sZeroRecords": "No se encontraron resultados",
+                    "sEmptyTable": "Ningún dato disponible en esta tabla",
+                    "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                    "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                    "sInfoPostFix": "",
+                    "sSearch": "Buscar:",
+                    "sUrl": "",
+                    "sInfoThousands": ",",
+                    "sLoadingRecords": "Cargando...",
+                    "oPaginate": {
+                        "sFirst": "Primero",
+                        "sLast": "Último",
+                        "sNext": "Siguiente",
+                        "sPrevious": "Anterior"
+                    },
+                    "oAria": {
+                        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                    },
+                    "buttons": {
+                        "copy": "Copiar",
+                        "colvis": "Visibilidad",
+                        "print": "Imprimir"
+                    }
+                },
+            });
+    });
+    $('.table tfoot th').each(function () {
+        var title = $(this).text();
+        $(this).html('<input type="text" placeholder="Buscar ' + title + '" />');
+    });
+    $(".selPersona").click(function (event) {
+        event.preventDefault();
+        var c = btoa($(this).val());
+        window.location.href = baseUrl + "/modificar_datos_personas/" + c
+    });
+
+</script>
+{% endblock javascript %}

@@ -76,7 +76,7 @@
               <div class="form-group">
                 <label>Es Alumno?</label>
                 <div class="custom-control custom-checkbox">
-                  <input type="checkbox" class="custom-control-input" id="chkAlumno" name="chkAlumno">
+                  <input type="checkbox" class="custom-control-input" id="chkAlumno" name="chkAlumno" value="S">
                   <label class="custom-control-label" for="chkAlumno">Sí</label>
                 </div>
               </div>
@@ -85,7 +85,7 @@
               <div class="form-group">
                 <label>Es Profesor?</label>
                 <div class="custom-control custom-checkbox">
-                  <input type="checkbox" class="custom-control-input" id="chkProfesor" name="chkProfesor">
+                  <input type="checkbox" class="custom-control-input" id="chkProfesor" name="chkProfesor" value="S">
                   <label class="custom-control-label" for="chkProfesor">Sí</label>
                 </div>
               </div>
@@ -165,10 +165,11 @@
               </div>
             </div>
           </div>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           <div class="row">
             <div class="col-md-12">
               <div class="form-group text-right">
-                <button type="button" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> Registrar</button>
+                <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> Registrar</button>
               </div>
             </div>
           </div>
@@ -393,12 +394,14 @@ $("#btnAggMateria").click(function(event) {
   var materiaCod = $("#sltMateria option:selected").val();
   var titularDesc = $("#sltTitular option:selected").text();
   var titularCod = $("#sltTitular option:selected").val();
+  var turnoCod = $("#sltTurno option:selected").val();
   var turnoDesc = $("#sltTurno option:selected").text();
   var grupoDesc = $("#txtGrupo").val();
+  var modoCod = $("#sltModalidad option:selected").val();
   var modoDesc = $("#sltModalidad option:selected").text();
   var horaInicio = $("#txtHoraInicio").val();
   var horaCulminacion = $("#txtHoraCulminacion").val();
-  var registro = carreraCod+'/'+materiaCod+'/'+titularCod;
+  var registro = carreraCod+'/'+materiaCod+'/'+titularCod+'/'+turnoCod+'/'+grupoDesc+'/'+modoCod+'/'+horaInicio+'/'+horaCulminacion;
   var modulo = $("#txtmodulo").val();
   if (carreraCod!="" && materiaCod!="" && carreraCod!=null && materiaCod!=null) {
       if (modulo=='A') {
@@ -409,7 +412,7 @@ $("#btnAggMateria").click(function(event) {
           var h = '<tr class="filaAlumno'+a+'" value="'+registro+'">';
           h += '<td>'+carreraDesc+'</td>';
           h += '<td>'+materiaDesc+'</td>';
-          h += '<td>'+titularDesc+'<input type="hidden" name="txtTitula[]" readonly value="'+titularCod+'" /></td>';
+          h += '<td>'+titularDesc+'<input type="hidden" name="txtTitular[]" readonly value="'+titularCod+'" /></td>';
           h += '<td>'+turnoDesc+'</td>';
           h += '<td>'+grupoDesc+'</td>';
           h += '<td>'+modoDesc+'</td>';
@@ -438,13 +441,13 @@ $("#btnAggMateria").click(function(event) {
           materiasProfesor.push(registro);
           var h = '<tr class="filaProfesor'+p+'" value="'+registro+'">';
           h += '<td>'+carreraDesc+'</td>';
-          h += '<td>'+materiaDesc+'</td>';
+          h += '<td>'+materiaDesc+'<input type="hidden" name="txtMateriaProfesor[]" value="'+materiaCod+'"/></td>';
           h += '<td>{{ session.get("usua_nombre") }}</td>';
-          h += '<td>'+turnoDesc+'</td>';
-          h += '<td>'+grupoDesc+'</td>';
-          h += '<td>'+modoDesc+'</td>';
-          h += '<td>'+horaInicio+'</td>';
-          h += '<td>'+horaCulminacion+'</td>';
+          h += '<td>'+turnoDesc+'<input type="hidden" name="txtTurnoProfesor[]" value="'+turnoCod+'"/></td>';
+          h += '<td>'+grupoDesc+'<input type="hidden" name="txtGrupoProfesor[]" value="'+grupoDesc+'"/></td>';
+          h += '<td>'+modoDesc+'<input type="hidden" name="txtModoProfesor[]" value="'+modoCod+'"/></td>';
+          h += '<td>'+horaInicio+'<input type="hidden" name="txtHoraInicioProfesor[]" value="'+horaInicio+'"/></td>';
+          h += '<td>'+horaCulminacion+'<input type="hidden" name="txtHoraFinProfesor[]" value="'+horaCulminacion+'"/></td>';
           h += '<td><button type="button" class="elimAsignadas btn btn-warning btn-sm" value="'+p+'"><i class="fas fa-trash"></i></button></td>';
           h += '</tr>';
           if (materiasProfesor.length>1) {
@@ -465,6 +468,46 @@ $("#btnAggMateria").click(function(event) {
     Swal.fire('Atención!!!','Debe seleccionar la carrera y la materia.','warning');
   }
 });
-
+$("#frmRegPersonas").submit(function(event) {
+  event.preventDefault();
+  var formDatos = $(this).serialize();
+  $.post(baseUrl+'/registrar_persona', formDatos, function(data, textStatus, xhr) {
+    var r = data;
+    var h = "<ul>"
+    if (r != "correcto" && r != "incorrecto" && r != "existe") {
+      for (var i = 0; i < r.length; i++) {
+          h+='<li>'+r[i][1][0]+'</li>';
+      }
+      h += "</ul>";
+      Swal.fire({
+          icon: 'warning',
+          title: 'Atención!',
+          html: h,
+        });
+  } else {
+      if (r == "correcto") {
+          Swal.fire(
+              'Correcto!',
+              'Se registro correctamente a la persona!',
+              'success'
+          )
+      }
+      if (r == "incorrecto") {
+          Swal.fire(
+              'Atención!',
+              'Se produjó un error en la inserción de los registros',
+              'warning'
+          )
+      }
+      if (r == "existe") {
+        Swal.fire(
+            'Atención!',
+            'Ya existe registrada una persona con los mismo datos, verifique el listado de personas',
+            'warning'
+        )
+    }
+  }
+  });
+});
 </script>
 {% endblock %}
