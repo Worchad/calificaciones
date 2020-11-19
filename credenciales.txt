@@ -1,0 +1,11 @@
+Usuario: 999999
+Contraseña: Colfear@2020
+Rol: Administrador
+
+Usuario: 888888
+Contraseña: Colfear@2020
+Rol: Alumno
+
+Usuario: 777777
+Contraseña: Colfear@2020
+Rol: Profesor
