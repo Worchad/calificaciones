@@ -7,51 +7,60 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="Description" content="Sistema de registro de inventario" />
     <link rel="shortcut icon" href="{{ url_for('static', filename='graduation-cap-solid.ico') }}" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.2/cosmo/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='fontawesome/css/all.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='toaster/toaster.min.css') }}">
     <title>{{titulo}}</title>
     <style>
-        html,body{
+        html,
+        body {
             overflow: hidden;
             width: 100%;
             height: 100%;
             margin: 0px;
             padding: 0px;
         }
-        .contenedor{
+
+        .contenedor {
             height: auto;
             width: 100%;
         }
-        .izquierda{
+
+        .izquierda {
             background-color: rgb(30, 46, 80);
-            position:absolute;
+            position: absolute;
             top: 0;
             bottom: 0;
             width: 50%;
         }
-        .derecha{
+
+        .derecha {
             background-color: #E9F4FF;
-            position:absolute;
-            top:0;
-            left:50%;
-            bottom:0;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            bottom: 0;
             width: 50%;
         }
-        #formulario{
-            padding-top: 15%;
+
+        #formulario {
+            padding-top: 3%;
         }
-        #frase{
+
+        #frase {
             padding-top: 30%;
         }
+
         @media only screen and (max-width: 600px) {
-            .izquierda{
+            .izquierda {
                 display: none;
             }
-            .derecha{
+
+            .derecha {
                 width: 100%;
-                left:0;
+                left: 0;
             }
-          }
+        }
     </style>
 </head>
 
@@ -71,46 +80,25 @@
             <div class="align-items-center" id="formulario">
                 <div class="">
                     <div class="col-md-6 offset-md-3 text-center">
-                        <i class="fas fa-graduation-cap fa-3x"></i><br> <span style="font-size: 30px;">SISTEMA DE CONTROL
+                        <i class="fas fa-graduation-cap fa-3x"></i><br> <span style="font-size: 30px;">SISTEMA DE
+                            CONTROL
                             ACADÉMICO</span>
-                            <h3>Ingrese sus credenciales</h3>
-                            {% if error %}
-                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                                <span class="sr-only">Close</span>
-                            </button>
-                            <strong>Atención!</strong> {{ error }}.
-                        </div>
-                        {% endif %}
-
-                        {% with messages = get_flashed_messages(with_categories=true) %}
-                        {% if messages %}
-                        {% for category, message in messages %}
-                        <div class="alert alert-{{category}} alert-dismissible fade show" role="alert">
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                                <span class="sr-only">Close</span>
-                            </button>
-                            <strong>Atención!</strong> {{ message }}.
-                        </div>
-                        {% endfor %}
-                        {% endif %}
-                        {% endwith %}
+                        <h3>Ingrese sus credenciales</h3>
                         <form action="procesar_login" method="POST">
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <input type="number" class="form-control form-control-lg" name="txtUsuario" id="txtUsuario"
-                                            placeholder="Ingrese su cédula" autocomplete="off" autofocus>
+                                        <input type="number" class="form-control form-control-lg" name="txtUsuario"
+                                            id="txtUsuario" placeholder="Ingrese su cédula" autocomplete="off"
+                                            autofocus>
                                     </div>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <input type="password" class="form-control form-control-lg" name="txtPassword" id="txtPassword"
-                                            placeholder="Ingrese su Contraseña">
+                                        <input type="password" class="form-control form-control-lg" name="txtPassword"
+                                            id="txtPassword" placeholder="Ingrese su Contraseña">
                                     </div>
                                 </div>
                             </div>
@@ -129,7 +117,8 @@
                             <div class="row">
                                 <div class="col-md-12 text-right">
                                     <div class="form-group">
-                                        <button type="submit" class="btn btn-primary btn-lg btn-block"><i class="fas fa-sign-in-alt"></i>
+                                        <button type="submit" class="btn btn-primary btn-lg btn-block"><i
+                                                class="fas fa-sign-in-alt"></i>
                                             Ingresar al sistema</button>
                                     </div>
                                 </div>
@@ -140,9 +129,60 @@
             </div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='jquery/jquery.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/popper.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='toaster/toaster.min.js') }}"></script>
+    {% if error %}
+    <script>
+        Command: toastr["error"]("{{ error }}!")
+
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+    </script>
+    {% endif %}
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <script>
+        Command: toastr["warning"]("{{ message }}!")
+
+        toastr.options = {
+            "closeButton": false,
+            "debug": false,
+            "newestOnTop": false,
+            "progressBar": false,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": true,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        }
+    </script>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
 </body>
 
 </html>

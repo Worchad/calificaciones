@@ -10,14 +10,28 @@
             <div class="card-body">
                 {% if session.get('usua_rol')==3 %}
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <a href="registrar_persona"><button type="button" class="btn btn-primary btn-block"><i class="fas fa-user fa-5x"></i><br> Registrar Persona</button></a>
+                            <a href="{{ url_for('registrarPersona') }}"><button type="button" class="btn btn-primary btn-block"><i class="fas fa-user-plus fa-5x"></i><br> Registrar Persona</button></a>
                         </div>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <div class="form-group">
-                            <a href="listado_personas"><button type="button" class="btn btn-primary btn-block"><i class="fas fa-users fa-5x"></i><br> Listar Personas</button></a>
+                            <a href="{{ url_for('listadoPersonas') }}"><button type="button" class="btn btn-primary btn-block"><i class="fas fa-th-list fa-5x"></i><br> Listar Personas</button></a>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if session.get('usua_rol')==2 or session.get('usua_rol')==3 %}
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <a href="{{ url_for('registrar_notas') }}"><button type="button" class="btn btn-primary btn-block"><i class="fas fa-book-open fa-5x"></i><br> Registrar Notas</button></a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <a href="{{ url_for('modificar_notas') }}"><button type="button" class="btn btn-primary btn-block"><i class="fas fa-user-edit fa-5x"></i><br> Modificar Notas</button></a>
                         </div>
                     </div>
                 </div>

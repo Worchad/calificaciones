@@ -5,7 +5,7 @@
   <div class="col-md-12">
     <div class="card">
       <div class="card-header">
-        Módulo de Registro de Personas
+        Módulo de Modificación de Personas
       </div>
       <div class="card-body">
         <form id="frmRegPersonas">
@@ -13,25 +13,25 @@
             <div class="col-md-3">
               <div class="form-group">
                 <label>Primer Nombre</label>
-                <input type="text" name="txtPrimerNombre" class="form-control" required="required" autofocus="autofocus" value="">
+                <input type="text" name="txtPrimerNombre" class="form-control" required="required" autofocus="autofocus" value="{{ personas.pers_prim_nombre|replace('None','') }}">
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group">
                 <label>Segundo Nombre</label>
-                <input type="text" name="txtSegundoNombre" class="form-control">
+                <input type="text" name="txtSegundoNombre" class="form-control" value="{{ personas.pers_seg_nombre|replace('None','') }}">
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group">
                 <label>Primer Apellido</label>
-                <input type="text" name="txtPrimerApellido" class="form-control">
+                <input type="text" name="txtPrimerApellido" class="form-control" value="{{ personas.pers_prim_apellido|replace('None','') }}">
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group">
                 <label>Segundo Apellido</label>
-                <input type="text" name="txtSegundoApellido" class="form-control">
+                <input type="text" name="txtSegundoApellido" class="form-control" value="{{ personas.pers_seg_apellido|replace('None','') }}">
               </div>
             </div>
           </div>
@@ -39,7 +39,7 @@
             <div class="col-md-3">
               <div class="form-group">
                 <label>Nro. de Cédula</label>
-                <input type="number" name="txtNroCedula" class="form-control">
+                <input type="number" name="txtNroCedula" class="form-control" value="{{ personas.pers_nro_doc|replace('None','') }}">
               </div>
             </div>
             <div class="col-md-3">
@@ -47,15 +47,15 @@
                 <label>Sexo</label>
                 <select name="sltSexo" class="form-control">
                   <option value="">SELECCIONE UNA OPCIÓN</option>
-                  <option value="F">FEMENINO</option>
-                  <option value="M">MASCULINO</option>
+                  <option value="F" {% if personas.pers_sexo=='F' %}selected{% endif %}>FEMENINO</option>
+                  <option value="M" {% if personas.pers_sexo=='M' %}selected{% endif %}>MASCULINO</option>
                 </select>
               </div>
             </div>
             <div class="col-md-3">
               <div class="form-group">
                 <label>Fecha de Nacimiento</label>
-                <input type="date" name="txtFechaNacimiento" class="form-control">
+                <input type="date" name="txtFechaNacimiento" id="txtFechaNacimiento" class="form-control">
               </div>
             </div>
             <div class="col-md-3">
@@ -63,10 +63,10 @@
                 <label>Estado Civil</label>
                 <select name="sltEstadoCivil" class="form-control">
                   <option value="">SELECCIONE UNA OPCIÓN</option>
-                  <option value="C">CASADO/A</option>
-                  <option value="D">DIVORCIADO/A</option>
-                  <option value="S">SOLTERO/A</option>
-                  <option value="V">VIUDO/A</option>
+                  <option value="C" {% if personas.pers_estado_civil=='C' %}selected{% endif %}>CASADO/A</option>
+                  <option value="D" {% if personas.pers_estado_civil=='D' %}selected{% endif %}>DIVORCIADO/A</option>
+                  <option value="S" {% if personas.pers_estado_civil=='S' %}selected{% endif %}>SOLTERO/A</option>
+                  <option value="V" {% if personas.pers_estado_civil=='V' %}selected{% endif %}>VIUDO/A</option>
                 </select>
               </div>
             </div>
@@ -76,7 +76,7 @@
               <div class="form-group">
                 <label>Es Alumno?</label>
                 <div class="custom-control custom-checkbox">
-                  <input type="checkbox" class="custom-control-input" id="chkAlumno" name="chkAlumno" value="S">
+                  <input type="checkbox" class="custom-control-input" id="chkAlumno" name="chkAlumno" value="S" {% if personas.pers_alumno=='S' %}checked{% endif %}>
                   <label class="custom-control-label" for="chkAlumno">Sí</label>
                 </div>
               </div>
@@ -85,7 +85,7 @@
               <div class="form-group">
                 <label>Es Profesor?</label>
                 <div class="custom-control custom-checkbox">
-                  <input type="checkbox" class="custom-control-input" id="chkProfesor" name="chkProfesor" value="S">
+                  <input type="checkbox" class="custom-control-input" id="chkProfesor" name="chkProfesor" value="S" {% if personas.pers_profesor=='S' %}checked{% endif %}>
                   <label class="custom-control-label" for="chkProfesor">Sí</label>
                 </div>
               </div>
@@ -118,10 +118,29 @@
                           <th>Acción</th>
                         </tr>
                       </thead>
-                      <tbody id="listInscriptas">
+                      <tbody>
+                        {% if alumno|length > 0 %}
+                        {% for a in alumno %}
+                        <tr>
+                          <td>{{ a.carreras.carr_desc }}</td>
+                          <td>{{ a.materias.mate_desc }}</td>
+                          <td>{{ a.personas.pers_prim_nombre+' '+a.personas.pers_prim_apellido }}</td>
+                          <td>{% if a.titular_materias.tima_turno=='T' %}TARDE{% endif %}{% if a.titular_materias.tima_turno=='M' %}MAÑANA{% endif %}{% if a.titular_materias.tima_turno=='N' %}NOCHE{% endif %}</td>
+                          <td>{{ a.titular_materias.tima_grupo }}</td>
+                          <td>{% if a.titular_materias.tima_modalidad=='H' %}HOME{% endif %}{% if a.titular_materias.tima_modalidad=='V' %}VIRTUAL{% endif %}{% if a.titular_materias.tima_modalidad=='P' %}PRESENCIAL{% endif %}</td>
+                          <td>{{ a.titular_materias.tima_horario_inicio }}</td>
+                          <td>{{ a.titular_materias.tima_horario_culminacion }}</td>
+                          <td><button type="button" class="elimInscriptasBD btn btn-danger btn-sm" value="{{ a.alumno_materias.alma_cod }}"><i class="fas fa-trash"></i></button></td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
                         <tr>
                           <th class="text-center" colspan="9"><h4>SIN DATOS DE CÁTEDRAS INSCRIPTAS</h4></th>
                         </tr>
+                        {% endif %}
+                      </tbody>
+                      <tbody id="listInscriptas">
+
                       </tbody>
                     </table>
                   </div>
@@ -154,10 +173,29 @@
                           <th>Acción</th>
                         </tr>
                       </thead>
-                      <tbody id="listAsignadas">
+                      <tbody>
+                        {% if profesor|length > 0 %}
+                        {% for a in profesor %}
+                        <tr>
+                          <td>{{ a.carreras.carr_desc }}</td>
+                          <td>{{ a.materias.mate_desc }}</td>
+                          <td>{{ a.personas.pers_prim_nombre+' '+a.personas.pers_prim_apellido }}</td>
+                          <td>{% if a.titular_materias.tima_turno=='T' %}TARDE{% endif %}{% if a.titular_materias.tima_turno=='M' %}MAÑANA{% endif %}{% if a.titular_materias.tima_turno=='N' %}NOCHE{% endif %}</td>
+                          <td>{{ a.titular_materias.tima_grupo }}</td>
+                          <td>{% if a.titular_materias.tima_modalidad=='H' %}HOME{% endif %}{% if a.titular_materias.tima_modalidad=='V' %}VIRTUAL{% endif %}{% if a.titular_materias.tima_modalidad=='P' %}PRESENCIAL{% endif %}</td>
+                          <td>{{ a.titular_materias.tima_horario_inicio }}</td>
+                          <td>{{ a.titular_materias.tima_horario_culminacion }}</td>
+                          <td><button type="button" class="elimAsignadasBD btn btn-danger btn-sm" value="{{ a.titular_materias.tima_cod }}"><i class="fas fa-trash"></i></button></td>
+                        </tr>
+                        {% endfor %}
+                        {% else %}
                         <tr>
                           <th class="text-center" colspan="9"><h4>SIN DATOS DE CÁTEDRAS ASIGNADAS</h4></th>
                         </tr>
+                        {% endif %}
+                      </tbody>
+                      <tbody id="listAsignadas">
+
                       </tbody>
                     </table>
                   </div>
@@ -165,11 +203,12 @@
               </div>
             </div>
           </div>
+          <input type="hidden" name="txtPersonaCod" value="{{ personas.pers_cod }}">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           <div class="row">
             <div class="col-md-12">
               <div class="form-group text-right">
-                <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> Registrar</button>
+                <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-edit"></i> Modificar</button>
               </div>
             </div>
           </div>
@@ -274,6 +313,27 @@
 {% endblock %}
 {% block javascript %}
 <script type="text/javascript">
+var fechaNacimiento = '{{ personas.pers_fecha_nacimiento }}'.split('/');
+var dia = fechaNacimiento[0];
+var mes = fechaNacimiento[1];
+var ano = fechaNacimiento[2];
+$("#txtFechaNacimiento").val(ano+'-'+mes+'-'+dia);
+if($("#chkAlumno").prop('checked')==true){
+  $("#btnAggAlumno").show('slow');
+  $("#sltTurno").attr('disabled', true);
+  $("#txtGrupo").attr('disabled', true);
+  $("#sltModalidad").attr('disabled', true);
+  $("#txtHoraInicio").attr('disabled', true);
+  $("#txtHoraCulminacion").attr('disabled', true);
+}
+if($("#chkProfesor").prop('checked')==true){
+  $("#btnAggProfesor").show('slow');
+  $("#sltTurno").attr('disabled', false);
+  $("#txtGrupo").attr('disabled', false);
+  $("#sltModalidad").attr('disabled', false);
+  $("#txtHoraInicio").attr('disabled', false);
+  $("#txtHoraCulminacion").attr('disabled', false);
+}
 var token = '{{ csrf_token() }}';
 $("#chkAlumno").click(function(event) {
   $("#sltTitular").attr('disabled', false);
@@ -292,7 +352,6 @@ $("#chkAlumno").click(function(event) {
     $("#txtHoraInicio").attr('disabled', false);
     $("#txtHoraCulminacion").attr('disabled', false);
     materiasAlumno = [];
-    $("#listInscriptas").html('<tr><th class="text-center" colspan="9"><h4>SIN DATOS DE CÁTEDRAS INSCRIPTAS</h4></th></tr>');
   }
 
 });
@@ -314,7 +373,6 @@ $("#chkProfesor").click(function(event) {
     $("#txtHoraInicio").attr('disabled', true);
     $("#txtHoraCulminacion").attr('disabled', true);
     materiasProfesor = [];
-    $("#listAsignadas").html('<tr><th class="text-center" colspan="9"><h4>SIN DATOS DE CÁTEDRAS ASIGNADAS</h4></th></tr>');
   }
 
 });
@@ -404,66 +462,66 @@ $("#btnAggMateria").click(function(event) {
   var registro = carreraCod+'/'+materiaCod+'/'+titularCod+'/'+turnoCod+'/'+grupoDesc+'/'+modoCod+'/'+horaInicio+'/'+horaCulminacion;
   var modulo = $("#txtmodulo").val();
   if (carreraCod!="" && materiaCod!="" && carreraCod!=null && materiaCod!=null) {
-      if (modulo=='A') {
-        if (materiasAlumno.includes(registro)) {
-          Swal.fire('Atención!!!','Ya se encuentra en el listado de Cátedras asignadas, la carrera y la materia que desea agregar.','warning');
+    if (modulo=='A') {
+      if (materiasAlumno.includes(registro)) {
+        Swal.fire('Atención!!!','Ya se encuentra en el listado de Cátedras asignadas, la carrera y la materia que desea agregar.','warning');
+      } else {
+        materiasAlumno.push(registro);
+        var h = '<tr class="filaAlumno'+a+'" value="'+registro+'">';
+        h += '<td>'+carreraDesc+'</td>';
+        h += '<td>'+materiaDesc+'</td>';
+        h += '<td>'+titularDesc+'<input type="hidden" name="txtTitular[]" readonly value="'+titularCod+'" /></td>';
+        h += '<td>'+turnoDesc+'</td>';
+        h += '<td>'+grupoDesc+'</td>';
+        h += '<td>'+modoDesc+'</td>';
+        h += '<td>'+horaInicio+'</td>';
+        h += '<td>'+horaCulminacion+'</td>';
+        h += '<td><button type="button" class="elimInscriptas btn btn-warning btn-sm" value="'+a+'"><i class="fas fa-trash"></i></button></td>';
+        h += '</tr>';
+        if (materiasAlumno.length>1) {
+          $("#listInscriptas").append(h);
         } else {
-          materiasAlumno.push(registro);
-          var h = '<tr class="filaAlumno'+a+'" value="'+registro+'">';
-          h += '<td>'+carreraDesc+'</td>';
-          h += '<td>'+materiaDesc+'</td>';
-          h += '<td>'+titularDesc+'<input type="hidden" name="txtTitular[]" readonly value="'+titularCod+'" /></td>';
-          h += '<td>'+turnoDesc+'</td>';
-          h += '<td>'+grupoDesc+'</td>';
-          h += '<td>'+modoDesc+'</td>';
-          h += '<td>'+horaInicio+'</td>';
-          h += '<td>'+horaCulminacion+'</td>';
-          h += '<td><button type="button" class="elimInscriptas btn btn-warning btn-sm" value="'+a+'"><i class="fas fa-trash"></i></button></td>';
-          h += '</tr>';
-          if (materiasAlumno.length>1) {
-            $("#listInscriptas").append(h);
-          } else {
-            $("#listInscriptas").html(h);
-          }
-          a++;
-          $(".elimInscriptas").click(function(event) {
-            event.preventDefault();
-            var v = $(this).val();
-            $(".filaAlumno"+v).remove();
-            materiasAlumno.splice($(".filaAlumno"+v).attr('value'));
-          });
+          $("#listInscriptas").html(h);
         }
+        a++;
+        $(".elimInscriptas").click(function(event) {
+          event.preventDefault();
+          var v = $(this).val();
+          $(".filaAlumno"+v).remove();
+          materiasAlumno.splice($(".filaAlumno"+v).attr('value'));
+        });
       }
-      if (modulo=='P') {
-        if (materiasProfesor.includes(registro)) {
-          Swal.fire('Atención!!!','Ya se encuentra en el listado de Cátedras asignadas, la carrera y la PromateriasProfesor que desea agregar.','warning');
+    }
+    if (modulo=='P') {
+      if (materiasProfesor.includes(registro)) {
+        Swal.fire('Atención!!!','Ya se encuentra en el listado de Cátedras asignadas, la carrera y la PromateriasProfesor que desea agregar.','warning');
+      } else {
+        materiasProfesor.push(registro);
+        var h = '<tr class="filaProfesor'+p+'" value="'+registro+'">';
+        h += '<td>'+carreraDesc+'</td>';
+        h += '<td>'+materiaDesc+'<input type="hidden" name="txtMateriaProfesor[]" value="'+materiaCod+'"/></td>';
+        h += '<td>{{ session.get("usua_nombre") }}</td>';
+        h += '<td>'+turnoDesc+'<input type="hidden" name="txtTurnoProfesor[]" value="'+turnoCod+'"/></td>';
+        h += '<td>'+grupoDesc+'<input type="hidden" name="txtGrupoProfesor[]" value="'+grupoDesc+'"/></td>';
+        h += '<td>'+modoDesc+'<input type="hidden" name="txtModoProfesor[]" value="'+modoCod+'"/></td>';
+        h += '<td>'+horaInicio+'<input type="hidden" name="txtHoraInicioProfesor[]" value="'+horaInicio+'"/></td>';
+        h += '<td>'+horaCulminacion+'<input type="hidden" name="txtHoraFinProfesor[]" value="'+horaCulminacion+'"/></td>';
+        h += '<td><button type="button" class="elimAsignadas btn btn-warning btn-sm" value="'+p+'"><i class="fas fa-trash"></i></button></td>';
+        h += '</tr>';
+        if (materiasProfesor.length>1) {
+          $("#listAsignadas").append(h);
         } else {
-          materiasProfesor.push(registro);
-          var h = '<tr class="filaProfesor'+p+'" value="'+registro+'">';
-          h += '<td>'+carreraDesc+'</td>';
-          h += '<td>'+materiaDesc+'<input type="hidden" name="txtMateriaProfesor[]" value="'+materiaCod+'"/></td>';
-          h += '<td>{{ session.get("usua_nombre") }}</td>';
-          h += '<td>'+turnoDesc+'<input type="hidden" name="txtTurnoProfesor[]" value="'+turnoCod+'"/></td>';
-          h += '<td>'+grupoDesc+'<input type="hidden" name="txtGrupoProfesor[]" value="'+grupoDesc+'"/></td>';
-          h += '<td>'+modoDesc+'<input type="hidden" name="txtModoProfesor[]" value="'+modoCod+'"/></td>';
-          h += '<td>'+horaInicio+'<input type="hidden" name="txtHoraInicioProfesor[]" value="'+horaInicio+'"/></td>';
-          h += '<td>'+horaCulminacion+'<input type="hidden" name="txtHoraFinProfesor[]" value="'+horaCulminacion+'"/></td>';
-          h += '<td><button type="button" class="elimAsignadas btn btn-warning btn-sm" value="'+p+'"><i class="fas fa-trash"></i></button></td>';
-          h += '</tr>';
-          if (materiasProfesor.length>1) {
-            $("#listAsignadas").append(h);
-          } else {
-            $("#listAsignadas").html(h);
-          }
-          p++;
-          $(".elimAsignadas").click(function(event) {
-            event.preventDefault();
-            var v = $(this).val();
-            $(".filaProfesor"+v).remove();
-            materiasProfesor.splice($(".filaProfesor"+v).attr('value'));
-          });
+          $("#listAsignadas").html(h);
         }
+        p++;
+        $(".elimAsignadas").click(function(event) {
+          event.preventDefault();
+          var v = $(this).val();
+          $(".filaProfesor"+v).remove();
+          materiasProfesor.splice($(".filaProfesor"+v).attr('value'));
+        });
       }
+    }
   } else {
     Swal.fire('Atención!!!','Debe seleccionar la carrera y la materia.','warning');
   }
@@ -476,38 +534,128 @@ $("#frmRegPersonas").submit(function(event) {
     var h = "<ul>"
     if (r != "correcto" && r != "incorrecto" && r != "existe") {
       for (var i = 0; i < r.length; i++) {
-          h+='<li>'+r[i][1][0]+'</li>';
+        h+='<li>'+r[i][1][0]+'</li>';
       }
       h += "</ul>";
       Swal.fire({
-          icon: 'warning',
-          title: 'Atención!',
-          html: h,
-        });
-  } else {
+        icon: 'warning',
+        title: 'Atención!',
+        html: h,
+      });
+    } else {
       if (r == "correcto") {
-          Swal.fire(
-              'Correcto!',
-              'Se registro correctamente a la persona!',
-              'success'
-          )
+        Swal.fire(
+          'Correcto!',
+          'Se modificó correctamente a la persona!',
+          'success'
+        )
       }
       if (r == "incorrecto") {
-          Swal.fire(
-              'Atención!',
-              'Se produjó un error en la inserción de los registros',
-              'warning'
-          )
+        Swal.fire(
+          'Atención!',
+          'Se produjó un error en la modificación de los registros',
+          'warning'
+        )
       }
       if (r == "existe") {
         Swal.fire(
-            'Atención!',
-            'Ya existe registrada una persona con los mismo datos, verifique el listado de personas',
-            'warning'
+          'Atención!',
+          'Ya existe registrada una persona con los mismo datos, verifique el listado de personas',
+          'warning'
         )
+      }
     }
-  }
   });
 });
+$(".elimInscriptasBD").click(function(event) {
+  event.preventDefault();
+  var v = $(this).val();
+  Swal.fire({
+    title: 'Está Seguro?',
+    text: "Está acción eliminará el registro!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    cancelButtonText: 'Cancelar',
+    confirmButtonText: 'Sí, quiero eliminarlo!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: baseUrl+'/eliminar_materias_inscriptas',
+        type: 'POST',
+        data: {materia:v},
+        beforeSend: function(xhr, settings) {
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", token)
+          }
+        }
+      })
+      .done(function(data) {
+        r = data;
+        if (r=='correcto') {
+          Swal.fire(
+            'Eliminado!',
+            'La materia seleccionada ha sido eliminada',
+            'success'
+          )
+          window.location.reload();
+        } else {
+          Swal.fire(
+            'Error!',
+            'No se pudo eliminar la materia seleccionada, intente de nuevo',
+            'error'
+          )
+        }
+      });
+    }
+  })
+});
+$(".elimAsignadasBD").click(function(event) {
+  event.preventDefault();
+  var v = $(this).val();
+  Swal.fire({
+    title: 'Está Seguro?',
+    text: "Está acción eliminará el registro!",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    cancelButtonText: 'Cancelar',
+    confirmButtonText: 'Sí, quiero eliminarlo!'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      $.ajax({
+        url: baseUrl+'/eliminar_materias_asignadas',
+        type: 'POST',
+        data: {materia:v},
+        beforeSend: function(xhr, settings) {
+          if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", token)
+          }
+        }
+      })
+      .done(function(data) {
+        r = data;
+        if (r=='correcto') {
+          Swal.fire(
+            'Eliminado!',
+            'La materia seleccionada ha sido eliminada',
+            'success'
+          )
+          window.location.reload();
+        } else {
+          Swal.fire(
+            'Error!',
+            'No se pudo eliminar la materia seleccionada, intente de nuevo',
+            'error'
+          )
+        }
+      });
+    }
+  })
+});
+
+
 </script>
 {% endblock %}

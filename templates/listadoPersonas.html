@@ -38,7 +38,7 @@
                                         {% endif %}
                                         <td>{{ p.pers_prim_nombre+' '+segundoNombre+' '+p.pers_prim_apellido+' '+segundoApellido }}
                                         </td>
-                                        <td>{{ p.pers_fecha_nacimiento }}</td>
+                                        <td>{{ p.pers_fecha_nacimiento|replace('None','S/D') }}</td>
                                         <td>{% if p.pers_alumno=='S' %}
                                             SÍ
                                             {% else %}

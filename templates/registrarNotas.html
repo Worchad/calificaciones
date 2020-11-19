@@ -1,0 +1,168 @@
+{% extends "master.html" %}
+{% block title%}{{titulo}}{% endblock %}
+{% block content %}
+<form id="frmNotasAlumnos">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Módulo de Registro de Notas
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover table-condensed" id="tblAsignadas">
+                  <thead>
+                    <tr>
+                      <th>Carrera</th>
+                      <th>Materia</th>
+                      <th>Año</th>
+                      <th>Grupo</th>
+                      <th>Turno</th>
+                      <th>Modalidad</th>
+                      <th>Horario</th>
+                    </tr>
+                  </thead>
+                  <tbody style="cursor: pointer;">
+                    {% if materias|length > 0 %}
+                    {% for m in materias %}
+                    <tr class="filaAsignadas" value="{{ m.titular_materias.tima_cod }}">
+                      <td style="-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">{{ m.carreras.carr_desc }}</td>
+                      <td style="-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">{{ m.materias.mate_desc }}</td>
+                      <td style="-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">{{ m.titular_materias.tima_anio }}</td>
+                      <td style="-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">{{ m.titular_materias.tima_grupo }}</td>
+                      <td style="-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">{{ m.titular_materias.tima_turno }}</td>
+                      <td style="-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">{{ m.titular_materias.tima_modalidad }}</td>
+                      <td style="-webkit-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none;">{{ m.titular_materias.tima_horario_inicio }} - {{ m.titular_materias.tima_horario_culminacion }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                  <thead>
+                    <tr>
+                      <th>Cédula</th>
+                      <th>Alumno</th>
+                      <th>1er. Parcial</th>
+                      <th>2do. Parcial</th>
+                      <th>3er. Parcial</th>
+                      <th>Exámen Final</th>
+                      <th>Recuperatorio</th>
+                    </tr>
+                  </thead>
+                  <tbody id="listAlumnos">
+
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12 text-right">
+              <div class="form-group">
+                <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-save"></i> Registrar Notas</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% block javascript %}
+<script>
+var token = '{{ csrf_token() }}';
+$('#tblAsignadas').DataTable(
+  {
+    'language': {
+      "sProcessing": "Procesando...",
+      "sLengthMenu": "Mostrar _MENU_ registros",
+      "sZeroRecords": "No se encontraron resultados",
+      "sEmptyTable": "Ningún dato disponible en esta tabla",
+      "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+      "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+      "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+      "sInfoPostFix": "",
+      "sSearch": "Buscar:",
+      "sUrl": "",
+      "sInfoThousands": ",",
+      "sLoadingRecords": "Cargando...",
+      "oPaginate": {
+        "sFirst": "Primero",
+        "sLast": "Último",
+        "sNext": "Siguiente",
+        "sPrevious": "Anterior"
+      },
+      "oAria": {
+        "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+        "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+      },
+      "buttons": {
+        "copy": "Copiar",
+        "colvis": "Visibilidad",
+        "print": "Imprimir"
+      }
+    },
+  });
+  $(".filaAsignadas").dblclick(function(event) {
+    materia = $(this).attr('value');
+    $.ajax({
+      url: '/obtener_alumno',
+      type: 'POST',
+      data: {materia},
+      beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+          xhr.setRequestHeader("X-CSRFToken", token)
+        }
+      }
+    })
+    .done(function(data) {
+      var datos = Object.values(data);
+      var cantidad = datos.length;
+      var h = '';
+      if(cantidad>0){
+        for (var i = 0; i < cantidad; i++) {
+          var persona = datos[i].primer_nombre+' '+datos[i].segundo_nombre+' '+datos[i].primer_apellido+' '+datos[i].segundo_apellido;
+          h+='<tr class="filaAlumnos" value="'+datos[i].alma_cod+'">';
+          h+='<td>'+datos[i].cedula+'</td>';
+          h+='<td>'+persona+'</td>';
+          h+='<td><input class="form-control" type="number" name="notaPrimerParcial" value="'+datos[i].primer_parcial+'" min="0" max="100"></td>';
+          h+='<td><input class="form-control" type="number" name="notaSegundoParcial" value="'+datos[i].segundo_parcial+'" min="0" max="100"></td>';
+          h+='<td><input class="form-control" type="number" name="notaTercerParcial" value="'+datos[i].tercer_parcial+'" min="0" max="100"></td>';
+          h+='<td><input class="form-control" type="number" name="notaFinal" value="'+datos[i].final+'" min="0" max="100"></td>';
+          h+='<td><input class="form-control" type="number" name="notaExtraordinario" value="'+datos[i].extraordinario+'" min="0" max="100"></td>';
+          h+='</tr>';
+        }
+      }else{
+        h+='<tr><td class="text-center" colspan="7"><h4>SIN ALUMNOS REGISTRADOS EN LA MATERIA</h4></td></tr>';
+      }
+      $("#listAlumnos").html(h);
+    });
+  });
+  $("#frmNotasAlumnos").submit(function(event) {
+    event.preventDefault();
+    var formDatos = $(this).serialize();
+    $.ajax({
+      url: baseUrl+'/registrar_notas_alumnos',
+      type: 'POST',
+      data: formDatos,
+      beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+          xhr.setRequestHeader("X-CSRFToken", token)
+        }
+      }
+    })
+    .done(function(data) {
+      var r = data;
+    });
+
+  });
+  </script>
+  {% endblock javascript %}
