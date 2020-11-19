@@ -44,7 +44,7 @@
             </div>
             <div class="col-md-8">
               <div class="table-responsive">
-                <table class="table table-bordered table-hover" id="tblAlumnos">
+                <table class="table table-bordered table-hover">
                   <thead>
                     <tr>
                       <th>Cédula</th>
@@ -111,68 +111,6 @@ $('#tblAsignadas').DataTable(
       }
     },
   });
-  $('#tblAlumnos').DataTable(
-      {
-          dom: 'Bfrtip',
-          buttons: [
-              {extend: 'excel',
-              exportOptions:{
-                  columns: [0,1,2,3,4]
-              }},
-              {extend: 'pdf',
-              exportOptions:{
-                  columns: [0,1,2,3,4]
-              }},
-              {extend: 'print',
-              exportOptions:{
-                  columns: [0,1,2,3,4]
-              }}
-
-          ],
-          initComplete: function () {
-              // Apply the search
-              this.api().columns().every(function () {
-                  var that = this;
-
-                  $('input', this.footer()).on('keyup change clear', function () {
-                      if (that.search() !== this.value) {
-                          that
-                              .search(this.value)
-                              .draw();
-                      }
-                  });
-              });
-          },
-          'language': {
-              "sProcessing": "Procesando...",
-              "sLengthMenu": "Mostrar _MENU_ registros",
-              "sZeroRecords": "No se encontraron resultados",
-              "sEmptyTable": "Ningún dato disponible en esta tabla",
-              "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-              "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-              "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
-              "sInfoPostFix": "",
-              "sSearch": "Buscar:",
-              "sUrl": "",
-              "sInfoThousands": ",",
-              "sLoadingRecords": "Cargando...",
-              "oPaginate": {
-                  "sFirst": "Primero",
-                  "sLast": "Último",
-                  "sNext": "Siguiente",
-                  "sPrevious": "Anterior"
-              },
-              "oAria": {
-                  "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
-                  "sSortDescending": ": Activar para ordenar la columna de manera descendente"
-              },
-              "buttons": {
-                  "copy": "Copiar",
-                  "colvis": "Visibilidad",
-                  "print": "Imprimir"
-              }
-          },
-      });
   $(".filaAsignadas").dblclick(function(event) {
     materia = $(this).attr('value');
     $.ajax({
