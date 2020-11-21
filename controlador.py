@@ -467,12 +467,44 @@ def obtener_alumno():
             })
             i = i + 1
         return resultado
-        
 
-@app.route('/modificar_notas')
-def modificar_notas():
-    titulo = "COLFEAR | Modificación Notas"
-    return render_template('registrarNotas.html',titulo=titulo)
+
+@app.route('/procesar_registrar_notas',methods=['POST'])
+def procesar_registrar_notas():
+    resultado = None
+    if request.method == 'POST':
+        datos = request.form
+        pparcial = request.form.getlist('notaPrimerParcial')
+        sparcial = request.form.getlist('notaSegundoParcial')
+        tparcial = request.form.getlist('notaTercerParcial')
+        final = request.form.getlist('notaFinal')
+        extraordinario = request.form.getlist('notaExtraordinario')
+        alma_cod = request.form.getlist('alma_cod')
+        cantAlumno = len(alma_cod)
+        try:
+            recorrido = 0
+            while recorrido < cantAlumno:
+                db.session.query(AlumnoMaterias).filter(AlumnoMaterias.alma_cod == alma_cod[recorrido]).update({
+                        AlumnoMaterias.alma_primer_parcial: pparcial[recorrido],
+                        AlumnoMaterias.alma_segundo_parcial: sparcial[recorrido],
+                        AlumnoMaterias.alma_tercer_parcial: tparcial[recorrido],
+                        AlumnoMaterias.alma_final: final[recorrido],
+                        AlumnoMaterias.alma_extraordinario: extraordinario[recorrido]
+                    })
+                recorrido +=1
+                db.session.flush()
+            db.session.commit()
+            resultado = 'correcto'
+        except :
+            db.session.rollback()
+            resultado = 'incorrecto'
+    return resultado
+
+@app.route('/visualizar_notas')
+def visualizar_notas():
+    titulo = "COLFEAR | Ver Notas"
+    materias = db.session.query(TitularMaterias,Personas,Carreras,CarrerasMaterias,Materias,AlumnoMaterias).join(Personas,Personas.pers_cod==TitularMaterias.tima_pers_cod).join(CarrerasMaterias,CarrerasMaterias.came_cod==TitularMaterias.tima_came_cod).join(AlumnoMaterias,AlumnoMaterias.alma_tima_cod==TitularMaterias.tima_cod).join(Carreras,Carreras.carr_cod==CarrerasMaterias.came_carr_cod).join(Materias,Materias.mate_cod==CarrerasMaterias.came_mate_cod).filter(AlumnoMaterias.alma_pers_cod==session.get('usua_pers_cod')).all()
+    return render_template('verNotas.html',titulo=titulo,materias=materias)
 
 @app.route('/cerrar_sesion')
 def cerrarSesion():
@@ -480,7 +512,6 @@ def cerrarSesion():
     return redirect(url_for('index'))
 
 class AlchemyEncoder(json.JSONEncoder):
-    
     def default(self, obj):
         if isinstance(obj.__class__, DeclarativeMeta):
             # an SQLAlchemy class

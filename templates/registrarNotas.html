@@ -63,6 +63,7 @@
               </div>
             </div>
           </div>
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           <div class="row">
             <div class="col-md-12 text-right">
               <div class="form-group">
@@ -132,7 +133,7 @@ $('#tblAsignadas').DataTable(
           var persona = datos[i].primer_nombre+' '+datos[i].segundo_nombre+' '+datos[i].primer_apellido+' '+datos[i].segundo_apellido;
           h+='<tr class="filaAlumnos" value="'+datos[i].alma_cod+'">';
           h+='<td>'+datos[i].cedula+'</td>';
-          h+='<td>'+persona+'</td>';
+          h+='<td>'+persona+'<input type="hidden" name="alma_cod" value="'+datos[i].alma_cod+'" readonly/></td>';
           h+='<td><input class="form-control" type="number" name="notaPrimerParcial" value="'+datos[i].primer_parcial+'" min="0" max="100"></td>';
           h+='<td><input class="form-control" type="number" name="notaSegundoParcial" value="'+datos[i].segundo_parcial+'" min="0" max="100"></td>';
           h+='<td><input class="form-control" type="number" name="notaTercerParcial" value="'+datos[i].tercer_parcial+'" min="0" max="100"></td>';
@@ -150,7 +151,7 @@ $('#tblAsignadas').DataTable(
     event.preventDefault();
     var formDatos = $(this).serialize();
     $.ajax({
-      url: baseUrl+'/registrar_notas_alumnos',
+      url: baseUrl+'/procesar_registrar_notas',
       type: 'POST',
       data: formDatos,
       beforeSend: function(xhr, settings) {
@@ -161,6 +162,20 @@ $('#tblAsignadas').DataTable(
     })
     .done(function(data) {
       var r = data;
+      if (r == "correcto") {
+          Swal.fire(
+              'Correcto!',
+              'Se registro correctamente las notas!',
+              'success'
+          )
+      }
+      if (r == "incorrecto") {
+          Swal.fire(
+              'Atención!',
+              'Se produjó un error en la inserción de los registros',
+              'warning'
+          )
+      }
     });
 
   });

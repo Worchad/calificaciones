@@ -1,5 +1,4 @@
 import os
-from decouple import config
 SECRET_KEY = 'v}*`KT3:82^dc[|M?.rYs/)QP#:2Bf*0M#WaG"$aq.iPMnA_vph&5=RL;_e"|Br'
 SESSION_TYPE = 'filesystem'
 basedir = os.path.abspath(os.path.dirname(__file__))

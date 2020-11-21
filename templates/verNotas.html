@@ -1,0 +1,130 @@
+{% extends "master.html" %}
+{% block title%}{{titulo}}{% endblock %}
+{% block content %}
+<form id="frmNotasAlumnos">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          Módulo de Registro de Notas
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-12">
+              <div class="table-responsive">
+                <table class="table table-table-bordered">
+                  <thead>
+                    <tr>
+                      <td>Profesor</td>
+                      <td>Materia</td>
+                      <td>Año</td>
+                      <td>Turno</td>
+                      <td>Grupo</td>
+                      <td>Modalidad</td>
+                      <td>Horario</td>
+                      <td>1er. Parcial</td>
+                      <td>2do. Parcial</td>
+                      <td>3er. Parcial</td>
+                      <td>Final</td>
+                      <td>Extraordinario</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% if materias|length > 0 %}
+                    {% for m in materias %}
+                    <tr>
+                      <td>{{ m.personas.pers_prim_nombre }}</td>
+                      <td>{{ m.materias.mate_desc }}</td>
+                      <td>{{ m.titular_materias.tima_anio }}</td>
+                      <td>
+                        {% if m.titular_materias.tima_turno=='T' %}TARDE{% endif %}{% if m.titular_materias.tima_turno=='M' %}MAÑANA{% endif %}{% if m.titular_materias.tima_turno=='N' %}NOCHE{% endif %}
+                      </td>
+                      <td>{{ m.titular_materias.tima_grupo }}</td>
+                      <td>
+                        {% if m.titular_materias.tima_modalidad=='H' %}HOME{% endif %}{% if m.titular_materias.tima_modalidad=='V' %}VIRTUAL{% endif %}{% if m.titular_materias.tima_modalidad=='P' %}PRESENCIAL{% endif %}
+                      </td>
+                      <td>{{ m.titular_materias.tima_horario_inicio }} -
+                        {{ m.titular_materias.tima_horario_culminacion }}</td>
+                      <td>{{ m.alumno_materias.alma_primer_parcial }}</td>
+                      <td>{{ m.alumno_materias.alma_segundo_parcial }}</td>
+                      <td>{{ m.alumno_materias.alma_tercer_parcial }}</td>
+                      <td>{{ m.alumno_materias.alma_final }}</td>
+                      <td>{{ m.alumno_materias.alma_extraordinario }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+{% block javascript %}
+<script>
+  var token = '{{ csrf_token() }}';
+  $('.table').DataTable(
+    {
+      dom: 'Bfrtip',
+      buttons: [
+        {
+          extend: 'excel',
+        },
+        {
+          extend: 'pdf',
+        },
+        {
+          extend: 'print',
+        }
+
+      ],
+      initComplete: function () {
+        // Apply the search
+        this.api().columns().every(function () {
+          var that = this;
+
+          $('input', this.footer()).on('keyup change clear', function () {
+            if (that.search() !== this.value) {
+              that
+                .search(this.value)
+                .draw();
+            }
+          });
+        });
+      },
+      'language': {
+        "sProcessing": "Procesando...",
+        "sLengthMenu": "Mostrar _MENU_ registros",
+        "sZeroRecords": "No se encontraron resultados",
+        "sEmptyTable": "Ningún dato disponible en esta tabla",
+        "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+        "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+        "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+        "sInfoPostFix": "",
+        "sSearch": "Buscar:",
+        "sUrl": "",
+        "sInfoThousands": ",",
+        "sLoadingRecords": "Cargando...",
+        "oPaginate": {
+          "sFirst": "Primero",
+          "sLast": "Último",
+          "sNext": "Siguiente",
+          "sPrevious": "Anterior"
+        },
+        "oAria": {
+          "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+          "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+        },
+        "buttons": {
+          "copy": "Copiar",
+          "colvis": "Visibilidad",
+          "print": "Imprimir"
+        }
+      },
+    });
+</script>
+{% endblock javascript %}
